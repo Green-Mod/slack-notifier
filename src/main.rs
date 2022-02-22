@@ -9,12 +9,12 @@ use std::env;
 #[clap(about = "A simple Slack notifier utility")]
 struct Args {
     /// Title to display in the notification
-    #[clap(long, default_value = "Risultato della build")]
+    #[clap(long, default_value = "Title")]
     title: String,
 
     /// Text to send in Slack's notification
     #[clap(short, long)]
-    text: String,
+    message: String,
 
     /// Indicates if the notification is a success or a failure
     #[clap(short, long)]
@@ -37,7 +37,7 @@ fn main() {
     match args {
         Args {
             title,
-            text,
+            message,
             success,
             icon,
         } => {
@@ -48,7 +48,7 @@ fn main() {
             let p = PayloadBuilder::new()
                 .text(title)
                 .icon_emoji(icon)
-                .attachments(vec![AttachmentBuilder::new(text)
+                .attachments(vec![AttachmentBuilder::new(message)
                     .color(if success { "#3d9970" } else { "#b13d41" })
                     .build()
                     .unwrap()])
@@ -58,7 +58,10 @@ fn main() {
             let res = slack.send(&p);
             match res {
                 Ok(()) => println!("Notification sent!"),
-                Err(x) => println!("Error sending notification: {:?}", x),
+                Err(x) => {
+                    eprintln!("Error sending notification: {:?}", x);
+                    std::process::exit(1);
+                }
             }
         }
     }
