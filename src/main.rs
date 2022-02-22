@@ -9,7 +9,7 @@ use std::env;
 #[clap(about = "A simple Slack notifier utility")]
 struct Args {
     /// Title to display in the notification
-    #[clap(long, default_value = "Title")]
+    #[clap(short, long, default_value = "Title")]
     title: String,
 
     /// Text to send in Slack's notification
